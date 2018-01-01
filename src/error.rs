@@ -9,6 +9,7 @@
 //! `repomonc` errors
 error_chain!{
     foreign_links {
+        AddrParse(::std::net::AddrParseError);
         Io(::std::io::Error);
     }
 }
