@@ -115,7 +115,7 @@ mod tcp {
     use std::io;
     use std::net::SocketAddr;
 
-    use bincode::{deserialize, Infinite, serialize};
+    use bincode::{deserialize, serialize, Infinite};
     use bytes::BytesMut;
     use futures::{Future, Stream};
     use repomon_config::Message;
@@ -183,7 +183,7 @@ mod tcp {
                     Err(e) => {
                         writeln!(io::stderr(), "{}", e)?;
                         Ok(None)
-                    },
+                    }
                 }
             } else {
                 Ok(None)
@@ -204,10 +204,8 @@ mod tcp {
                 Ok(bytes) => {
                     buf.extend(bytes.iter());
                     Ok(())
-                },
-                Err(_e) => {
-                    Ok(())
-                },
+                }
+                Err(_e) => Ok(()),
             }
         }
     }
@@ -217,7 +215,7 @@ mod udp {
     use std::io;
     use std::net::SocketAddr;
 
-    use bincode::{deserialize, Infinite, serialize};
+    use bincode::{deserialize, serialize, Infinite};
     use futures::{Future, Stream};
     use repomon_config::Message;
     use tokio_core::net::{UdpCodec, UdpSocket};
@@ -259,13 +257,15 @@ mod udp {
 
         // With UDP we could receive data from any source, so filter out
         // anything coming from a different address
-        Box::new(stream.filter_map(move |(src, chunk)| {
-            if src == addr {
-                Some(chunk)
-            } else {
-                None
-            }
-        }))
+        Box::new(stream.filter_map(
+            move |(src, chunk)| {
+                if src == addr {
+                    Some(chunk)
+                } else {
+                    None
+                }
+            },
+        ))
     }
 
     struct Bytes;
@@ -276,8 +276,8 @@ mod udp {
 
         fn decode(&mut self, addr: &SocketAddr, buf: &[u8]) -> io::Result<Self::In> {
             match deserialize(buf) {
-                    Ok(message) => Ok((*addr, message)),
-                    Err(_) => Ok((*addr, Default::default())),
+                Ok(message) => Ok((*addr, message)),
+                Err(_) => Ok((*addr, Default::default())),
             }
         }
 
@@ -285,8 +285,8 @@ mod udp {
             match serialize(&message, Infinite) {
                 Ok(bytes) => {
                     into.extend(bytes.iter());
-                },
-                Err(_e) => {},
+                }
+                Err(_e) => {}
             }
             addr
         }
