@@ -29,7 +29,7 @@ extern crate bincode;
 extern crate bytes;
 extern crate clap;
 extern crate futures;
-extern crate repomon_config;
+extern crate repomon;
 extern crate tokio_core;
 extern crate tokio_io;
 
@@ -40,7 +40,7 @@ use std::thread;
 
 use futures::sync::mpsc;
 use futures::{Future, Sink, Stream};
-use repomon_config::Message;
+use repomon::Message;
 use tokio_core::reactor::Core;
 
 mod error;
@@ -118,7 +118,7 @@ mod tcp {
     use bincode::{deserialize, serialize, Infinite};
     use bytes::BytesMut;
     use futures::{Future, Stream};
-    use repomon_config::Message;
+    use repomon::Message;
     use tokio_core::net::TcpStream;
     use tokio_core::reactor::Handle;
     use tokio_io::AsyncRead;
@@ -217,7 +217,7 @@ mod udp {
 
     use bincode::{deserialize, serialize, Infinite};
     use futures::{Future, Stream};
-    use repomon_config::Message;
+    use repomon::Message;
     use tokio_core::net::{UdpCodec, UdpSocket};
     use tokio_core::reactor::Handle;
 
