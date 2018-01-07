@@ -64,7 +64,6 @@ pub fn run() -> Result<i32> {
     // otherwise running anything useful.
     let mut out = io::stdout();
     core.run(stdout.for_each(|chunk| {
-        out.write_all(b"New Message\n").expect("");
         out.write_all(format!("{}\n", &chunk).as_bytes()).expect("");
         out.flush().expect("");
         Ok(())
