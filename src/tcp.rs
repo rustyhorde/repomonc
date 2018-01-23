@@ -13,6 +13,7 @@ use std::net::SocketAddr;
 use bincode::{deserialize, serialize, Infinite};
 use bytes::BytesMut;
 use futures::{Future, Stream};
+use log::Logs;
 use repomon::Message;
 use tokio_core::net::TcpStream;
 use tokio_core::reactor::Handle;
@@ -23,6 +24,7 @@ use tokio_io::codec::{Decoder, Encoder};
 pub fn connect(
     addr: &SocketAddr,
     handle: &Handle,
+    logs: &Logs,
     stdin: Box<Stream<Item = Message, Error = io::Error>>,
 ) -> Box<Stream<Item = Message, Error = io::Error>> {
     let tcp = TcpStream::connect(addr, handle);
@@ -43,10 +45,12 @@ pub fn connect(
     // You'll also note that we *spawn* the work to read stdin and write it
     // to the TCP stream. This is done to ensure that happens concurrently
     // with us reading data from the stream.
+    let stream_stderr = logs.stderr().clone();
     Box::new(tcp.map(move |stream| {
         let (sink, stream) = stream.framed(Bytes).split();
-        handle.spawn(stdin.forward(sink).then(|result| {
+        handle.spawn(stdin.forward(sink).then(move |result| {
             if let Err(e) = result {
+                try_error!(stream_stderr, "failed to write to socket: {}", e);
                 panic!("failed to write to socket: {}", e)
             }
             Ok(())
@@ -69,7 +73,6 @@ impl Decoder for Bytes {
     type Error = io::Error;
 
     fn decode(&mut self, buf: &mut BytesMut) -> io::Result<Option<Message>> {
-        use std::io::{self, Write};
         if buf.is_empty() {
             Ok(None)
         } else {
@@ -78,17 +81,14 @@ impl Decoder for Bytes {
 
             match deserialize(bytes.as_ref()) {
                 Ok(message) => Ok(Some(message)),
-                Err(e) => {
-                    writeln!(io::stderr(), "{}", e)?;
-                    Ok(None)
-                }
+                Err(_e) => Ok(None),
             }
         }
     }
 
-    // fn decode_eof(&mut self, buf: &mut BytesMut) -> io::Result<Option<Message>> {
-    //     self.decode(buf)
-    // }
+    fn decode_eof(&mut self, buf: &mut BytesMut) -> io::Result<Option<Message>> {
+        self.decode(buf)
+    }
 }
 
 impl Encoder for Bytes {

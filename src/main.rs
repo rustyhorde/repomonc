@@ -25,12 +25,20 @@
 
 #[macro_use]
 extern crate error_chain;
+#[macro_use]
+extern crate getset;
+#[macro_use]
+extern crate slog;
+#[macro_use]
+extern crate slog_try;
 
 extern crate bincode;
 extern crate bytes;
 extern crate clap;
 extern crate futures;
 extern crate repomon;
+extern crate slog_async;
+extern crate slog_term;
 extern crate tokio_core;
 extern crate tokio_io;
 
@@ -38,6 +46,7 @@ use std::io::{self, Write};
 use std::process;
 
 mod error;
+mod log;
 mod run;
 mod tcp;
 mod udp;

@@ -11,8 +11,10 @@ use clap::{App, Arg};
 use error::Result;
 use futures::sync::mpsc;
 use futures::{Future, Sink, Stream};
-use repomon::Message;
-use std::io::{self, Read, Write};
+use log::Logs;
+use repomon::{Category, Message};
+use slog::Level;
+use std::io::{self, Read};
 use std::net::SocketAddr;
 use std::thread;
 use tcp;
@@ -28,6 +30,20 @@ pub fn run() -> Result<i32> {
         .about("Connects to a repomons server to receive notifications")
         .arg(Arg::with_name("udp").short("u").long("udp"))
         .arg(Arg::with_name("address").default_value("127.0.0.1:8080"))
+        .arg(
+            Arg::with_name("verbose")
+                .short("v")
+                .multiple(true)
+                .help("Set the output verbosity level (more v's = more verbose)"),
+        )
+        .arg(
+            Arg::with_name("quiet")
+                .short("q")
+                .long("quiet")
+                .multiple(true)
+                .conflicts_with("verbose")
+                .help("Restrict output.  (more q's = more quiet"),
+        )
         .get_matches();
 
     // Parse what address we're going to connect to
@@ -35,6 +51,23 @@ pub fn run() -> Result<i32> {
         .value_of("address")
         .ok_or("invalid address")?
         .parse::<SocketAddr>()?;
+
+    // Setup the logging (info by default)
+    let mut level = match matches.occurrences_of("verbose") {
+        0 => Level::Info,
+        1 => Level::Debug,
+        2 | _ => Level::Trace,
+    };
+
+    level = match matches.occurrences_of("quiet") {
+        0 => level,
+        1 => Level::Warning,
+        2 => Level::Error,
+        3 | _ => Level::Critical,
+    };
+
+    let mut logs: Logs = Default::default();
+    logs.set_stdout_level(level);
 
     // Create the event loop and initiate the connection to the remote server
     let mut core = Core::new()?;
@@ -54,7 +87,7 @@ pub fn run() -> Result<i32> {
     let stdout = if matches.is_present("udp") {
         udp::connect(&addr, &handle, Box::new(stdin_rx))
     } else {
-        tcp::connect(&addr, &handle, Box::new(stdin_rx))
+        tcp::connect(&addr, &handle, &logs, Box::new(stdin_rx))
     };
 
     // And now with our stream of bytes to write to stdout, we execute that in
@@ -62,10 +95,17 @@ pub fn run() -> Result<i32> {
     // stdout, and in general it's a no-no to do that sort of work on the event
     // loop. In this case, though, we know it's ok as the event loop isn't
     // otherwise running anything useful.
-    let mut out = io::stdout();
-    core.run(stdout.for_each(|chunk| {
-        out.write_all(format!("{}\n", &chunk).as_bytes()).expect("");
-        out.flush().expect("");
+    let stdout_clone = logs.stdout().clone();
+    core.run(stdout.for_each(|message| {
+        match *message.category() {
+            Category::Info | Category::Ahead | Category::Behind => {
+                try_info!(stdout_clone, "{}", &message);
+            }
+            Category::UpToDate => {
+                try_trace!(stdout_clone, "{}", &message);
+            }
+        }
+
         Ok(())
     }))?;
 
