@@ -17,8 +17,8 @@ use log::Logs;
 use repomon::Message;
 use tokio_core::net::TcpStream;
 use tokio_core::reactor::Handle;
-use tokio_io::AsyncRead;
 use tokio_io::codec::{Decoder, Encoder};
+use tokio_io::AsyncRead;
 
 /// Connect to the given address via a `TcpStream`.
 pub fn connect(
