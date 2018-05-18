@@ -46,17 +46,19 @@ pub fn connect(
     // to the TCP stream. This is done to ensure that happens concurrently
     // with us reading data from the stream.
     let stream_stderr = logs.stderr().clone();
-    Box::new(tcp.map(move |stream| {
-        let (sink, stream) = stream.framed(Bytes).split();
-        handle.spawn(stdin.forward(sink).then(move |result| {
-            if let Err(e) = result {
-                try_error!(stream_stderr, "failed to write to socket: {}", e);
-                panic!("failed to write to socket: {}", e)
-            }
-            Ok(())
-        }));
-        stream
-    }).flatten_stream())
+    Box::new(
+        tcp.map(move |stream| {
+            let (sink, stream) = stream.framed(Bytes).split();
+            handle.spawn(stdin.forward(sink).then(move |result| {
+                if let Err(e) = result {
+                    try_error!(stream_stderr, "failed to write to socket: {}", e);
+                    panic!("failed to write to socket: {}", e)
+                }
+                Ok(())
+            }));
+            stream
+        }).flatten_stream(),
+    )
 }
 
 /// A simple `Codec` implementation that just ships bytes around.
