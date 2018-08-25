@@ -15,7 +15,7 @@ bincode = "0"
 bytes = "0"
 clap = "2"
 error-chain = "0"
-futures = "=0.1.21"
+futures = "0.1"
 getset = "0"
 repomon = "0"
 slog-async = "2"
@@ -26,7 +26,7 @@ tokio-io = "0"
 
 [dependencies.slog]
 features = ["max_level_trace", "release_max_level_trace"]
-version = "=2.1.1"
+version = "2"
 
 [patch.crates-io]
 repomon = { path = '../repomon' }
