@@ -35,14 +35,16 @@ pub fn run() -> Result<i32> {
                 .short("v")
                 .multiple(true)
                 .help("Set the output verbosity level (more v's = more verbose)"),
-        ).arg(
+        )
+        .arg(
             Arg::with_name("quiet")
                 .short("q")
                 .long("quiet")
                 .multiple(true)
                 .conflicts_with("verbose")
                 .help("Restrict output.  (more q's = more quiet"),
-        ).get_matches();
+        )
+        .get_matches();
 
     // Parse what address we're going to connect to
     let addr = matches

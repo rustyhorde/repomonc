@@ -57,7 +57,8 @@ pub fn connect(
                 Ok(())
             }));
             stream
-        }).flatten_stream(),
+        })
+        .flatten_stream(),
     )
 }
 
