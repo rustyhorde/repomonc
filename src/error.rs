@@ -7,7 +7,7 @@
 // modified, or distributed except according to those terms.
 
 //! `repomonc` errors
-error_chain!{
+error_chain! {
     foreign_links {
         AddrParse(::std::net::AddrParseError);
         Io(::std::io::Error);
