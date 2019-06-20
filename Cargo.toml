@@ -27,6 +27,3 @@ tokio-io = "0"
 [dependencies.slog]
 features = ["max_level_trace", "release_max_level_trace"]
 version = "2"
-
-[patch.crates-io]
-repomon = { path = '../repomon' }
