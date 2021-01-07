@@ -12,7 +12,7 @@ version = "0.1.0"
 
 [dependencies]
 bincode = "0"
-bytes = "0"
+bytes = "0.4"
 clap = "2"
 error-chain = "0"
 futures = "0.1"
@@ -23,6 +23,7 @@ slog-term = "2"
 slog-try = "0"
 tokio-core = "0"
 tokio-io = "0"
+tokio-codec = "0"
 
 [dependencies.slog]
 features = ["max_level_trace", "release_max_level_trace"]

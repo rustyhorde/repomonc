@@ -25,8 +25,8 @@ pub fn connect(
     addr: &SocketAddr,
     handle: &Handle,
     logs: &Logs,
-    stdin: Box<Stream<Item = Message, Error = io::Error>>,
-) -> Box<Stream<Item = Message, Error = io::Error>> {
+    stdin: Box<dyn Stream<Item = Message, Error = io::Error>>,
+) -> Box<dyn Stream<Item = Message, Error = io::Error>> {
     let tcp = TcpStream::connect(addr, handle);
     let handle = handle.clone();
 
@@ -48,6 +48,7 @@ pub fn connect(
     let stream_stderr = logs.stderr().clone();
     Box::new(
         tcp.map(move |stream| {
+            #[allow(deprecated)]
             let (sink, stream) = stream.framed(Bytes).split();
             handle.spawn(stdin.forward(sink).then(move |result| {
                 if let Err(e) = result {

@@ -126,12 +126,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bytes"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0dcbc35f504eb6fc275a6d20e4ebcda18cf50d40ba6fabff8c711fa16cb3b16"
-
-[[package]]
 name = "cfg-if"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -714,7 +708,7 @@ name = "repomonc"
 version = "0.1.0"
 dependencies = [
  "bincode",
- "bytes 0.6.0",
+ "bytes",
  "clap",
  "error-chain",
  "futures",
@@ -724,6 +718,7 @@ dependencies = [
  "slog-async",
  "slog-term",
  "slog-try",
+ "tokio-codec",
  "tokio-core",
  "tokio-io",
 ]
@@ -952,7 +947,7 @@ version = "0.1.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a09c0b5bb588872ab2f09afa13ee6e9dac11e10a0ec9e8e3ba39a5a5d530af6"
 dependencies = [
- "bytes 0.4.12",
+ "bytes",
  "futures",
  "mio",
  "num_cpus",
@@ -976,7 +971,7 @@ version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "25b2998660ba0e70d18684de5d06b70b70a3a747469af9dea7618cc59e75976b"
 dependencies = [
- "bytes 0.4.12",
+ "bytes",
  "futures",
  "tokio-io",
 ]
@@ -987,7 +982,7 @@ version = "0.1.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "87b1395334443abca552f63d4f61d0486f12377c2ba8b368e523f89e828cffd4"
 dependencies = [
- "bytes 0.4.12",
+ "bytes",
  "futures",
  "iovec",
  "log",
@@ -1037,7 +1032,7 @@ version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57fc868aae093479e3131e3d165c93b1c7474109d13c90ec0dda2a1bbfff0674"
 dependencies = [
- "bytes 0.4.12",
+ "bytes",
  "futures",
  "log",
 ]
@@ -1077,7 +1072,7 @@ version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "98df18ed66e3b72e742f185882a9e201892407957e45fbff8da17ae7a7c51f72"
 dependencies = [
- "bytes 0.4.12",
+ "bytes",
  "futures",
  "iovec",
  "mio",
@@ -1120,7 +1115,7 @@ version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2a0b10e610b39c38b031a2fcab08e4b82f16ece36504988dcbd81dbba650d82"
 dependencies = [
- "bytes 0.4.12",
+ "bytes",
  "futures",
  "log",
  "mio",
@@ -1135,7 +1130,7 @@ version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ab57a4ac4111c8c9dbcf70779f6fc8bc35ae4b2454809febac840ad19bd7e4e0"
 dependencies = [
- "bytes 0.4.12",
+ "bytes",
  "futures",
  "iovec",
  "libc",

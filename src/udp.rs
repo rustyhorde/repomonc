@@ -20,8 +20,8 @@ use tokio_core::reactor::Handle;
 pub fn connect(
     &addr: &SocketAddr,
     handle: &Handle,
-    stdin: Box<Stream<Item = Message, Error = io::Error>>,
-) -> Box<Stream<Item = Message, Error = io::Error>> {
+    stdin: Box<dyn Stream<Item = Message, Error = io::Error>>,
+) -> Box<dyn Stream<Item = Message, Error = io::Error>> {
     // We'll bind our UDP socket to a local IP/port, but for now we
     // basically let the OS pick both of those.
     let addr_to_bind = if addr.ip().is_ipv4() {

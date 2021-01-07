@@ -39,6 +39,7 @@ extern crate futures;
 extern crate repomon;
 extern crate slog_async;
 extern crate slog_term;
+extern crate tokio_codec;
 extern crate tokio_core;
 extern crate tokio_io;
 
